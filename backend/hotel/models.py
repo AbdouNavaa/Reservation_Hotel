@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
+# from booking.models import Room
 # Create your models here.
 
 class User(AbstractUser):

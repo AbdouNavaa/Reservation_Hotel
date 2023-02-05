@@ -8,7 +8,8 @@ class BookService {
   Future<List> getBook() async {
 try {
   var response =
-  await http.get(Uri.parse("http://10.0.2.2:8000/booking/bookList/"));
+  await http.get(Uri.parse("http://192.168.43.73:8000/booking/HotelListView/"));
+  // await http.get(Uri.parse("http://10.0.2.2:8000/booking/bookList/"));
   if (response.statusCode == 200) {
     return jsonDecode(response.body);
     print('4e sla7 --------------------------------------------');
@@ -20,60 +21,116 @@ try {
   return Future.error(e);
 }
   }
-  Future<List<Book>> fetchData() async {
-    List<Book> mytodos = [];
-    try{
-      http.Response response = await http.get(Uri.parse("http://127.0.0.1:8000/booking/bookList/"));
-      var data =  json.decode(response.body);
-      data.forEach((book) {
-        Book t = Book(id: book['id'],
-            type: book['type'],
-            descriptionn: book['description'],
-            image: book['image'],
-        );
 
-            mytodos.add(t);
-      });
-      print(mytodos.length);
 
-    }catch(e){ print('error is $e');}
-    return mytodos;
+  Future<List> getRoom(int id) async {
+try {
+  var response =
+  await http.get(Uri.parse("http://192.168.43.73:8000/booking/api/hotels/$id/rooms/rooms/"));
+  // await http.get(Uri.parse("http://10.0.2.2:8000/booking/bookList/"));
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+    print('4e sla7 --------------------------------------------');
+  } else {
+    return Future.error('Server Error');
+    print('4e 5asser sa77bi mad5al======================================');
+  }
+}catch(e){
+  return Future.error(e);
+}
+  }
+
+  Future<http.Response> addReservation(int IdUser, DateTime date, int IdRoom) async {
+    Map<String, dynamic> data = {
+      'IdUser': IdUser,
+      'date': date.toString(),
+      'IdRoom': IdRoom.toString(),
+    };
+
+    final response = await http.post(Uri.parse('http://192.168.43.73:8000/booking/api/reservations/'),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(data)).then((response) {
+      if (response.statusCode == 200) {
+        print('Reservation created successfully');
+      } else {
+        print('Failed to create reservation');
+      }
+    });
+
+    return response;
   }
 
 }
 
-class ListOfBook {
-  List<Book> books;
-  ListOfBook({required this.books});
-  factory ListOfBook.fromList(List list) {
-    List<Book> mybooks = [];
-    for (var ele in list) {
-      mybooks.add(Book.fromJson(ele));
-    }
-    return ListOfBook(books: mybooks);
-  }
-}
+//http://192.168.43.73:8000/booking/api/reservations/
 
-class Book {
+class Room {
 
 
-  Book({
+  Room({
     required this.id,
     required this.type,
-    required this.descriptionn,
+    required this.amount,
     required this.image,
+    required this.hotelId, required available,
   });
 
   late final int id;
   late final String type;
-  late final String descriptionn;
+  late final double amount;
+  late final bool available;
   late final String image;
+  late final int hotelId;
 
-  factory Book.fromJson(map) {
-    return Book(
+  factory Room.fromJson(map) {
+    return Room(
       id: map['id'],
       type: map['type'],
-      descriptionn: map['descriptionn'],
+      amount: map['amount'],
+      available: map['available'],
+      image: map['image'],
+      hotelId: map['hotelId'],
+    );
+  }
+}
+class User {
+
+
+  User({
+    required this.id,
+    required this.username,
+  });
+
+  late final int id;
+  late final String username;
+
+  factory User.fromJson(map) {
+    return User(
+      id: map['id'],
+      username: map['username'],
+    );
+  }
+}
+class Hotel {
+
+
+  Hotel({
+    required this.hotelId,
+    required this.name,
+    required this.place,
+    required this.image,
+  });
+
+  late final int hotelId;
+  late final String name;
+  late final String place;
+  late final String image;
+
+  factory Hotel.fromJson(map) {
+    return Hotel(
+      hotelId: map['hotelId'],
+      name: map['name'],
+      place: map['place'],
       image: map['image'],
     );
   }

@@ -2,25 +2,27 @@ from django.db import models
 from hotel.models import User
 
 # Create your models here.
-
-class Book(models.Model):
+class Hotel(models.Model):
+    name=models.CharField(max_length=255)
+    place= models.CharField( max_length=255)
+    image = models.ImageField(null=True)
+    
+    def __str__(self):
+        return self.name
+class Room(models.Model):
+    hotel=models.ForeignKey(Hotel, on_delete=models.CASCADE,null=True)
     type=models.CharField(max_length=255)
-    descriptionn= models.CharField( max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    available = models.BooleanField(default=True)
     image = models.ImageField(null=True)
     
     def __str__(self):
         return self.type
 class Booking(models.Model):
     bookedBy = models.ForeignKey(User, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    days = models.IntegerField()
-    amount = models.FloatField()
-    food = models.BooleanField(default=False)
-    spa = models.BooleanField(default=False)
-    gym = models.BooleanField(default=False)
-    club = models.BooleanField(default=False)
-    swimming = models.BooleanField(default=False)
-    games = models.BooleanField(default=False)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE,null=True)
+    date = models.DateField(null=True)
+    
    
     def __str__(self):
         return "Booking ID: "+str(self.id)

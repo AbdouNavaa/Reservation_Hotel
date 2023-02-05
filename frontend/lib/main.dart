@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Hotel ',
         theme: ThemeData(
-            primarySwatch: Colors.blueGrey
+            // primarySwatch: Colors.grey
         ),
         debugShowCheckedModeBanner: false,
         routes:{

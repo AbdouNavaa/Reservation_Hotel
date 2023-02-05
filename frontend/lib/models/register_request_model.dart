@@ -6,17 +6,17 @@ class RegisterRequestModel {
   late final String email;
   RegisterRequestModel.fromJson(Map<String, dynamic> json) {
     username = json['username'];
+    email = json['email'];
     password1 = json['password1'];
     password2 = json['password2'];
-    email = json['email'];
   }
 
   Map<String, dynamic> toJson() {
     final  _data = <String, dynamic>{};
     _data['username'] = this.username;
+    _data['email'] = this.email;
     _data['password1'] = this.password1;
     _data['password2'] = this.password2;
-    _data['email'] = this.email;
     return _data;
   }
 }

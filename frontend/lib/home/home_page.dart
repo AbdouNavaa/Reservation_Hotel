@@ -7,29 +7,44 @@ import 'package:frontend/pages/login.dart';
 
 import 'booking.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
+class Home extends StatelessWidget {
+   Home({super.key});
+  // final int? UserId;
+//   @override
+//   State<Home> createState() => _HomeState();
+// }
+//
+// class _HomeState extends State<Home> {
 
   BookService bookService = BookService();
-  late List<Book>? books;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  // late List<Book>? books;
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Text('Hotel Booking', style: TextStyle(fontSize: 27, fontStyle: FontStyle.italic),),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: (){
+            // setState(() {
+            //   TextFormField(
+            //     style: TextStyle(
+            //       height: 20,
+            //       backgroundColor: Colors.white,
+            //       // color: Colors.white
+            //     ),
+            //   );
+            // });
+          },
+          icon: Icon(Icons.search),
+        ),
         actions: [
 
           const Padding(padding: EdgeInsets.all(12.0)),
@@ -46,9 +61,11 @@ class _HomeState extends State<Home> {
             ),
           ),
         ],
+
       ),
       body: Container(
-        child: FutureBuilder<List>(
+        child:
+        FutureBuilder<List>(
                   future: bookService.getBook(),
                   builder: (context, snapshot) {
                     print(snapshot.data);
@@ -62,22 +79,21 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20)
                             ),
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children:[
                                 Row(
                                   children: [
                                     HomeCard(onPessed: (){},
-                                      icon: UserPicture( picAdderess: 'images/'+ snapshot.data![i]["image"].split('/').last, onPressed: () {  },),
-                                      title:snapshot.data![i]["type"],),
+                                      icon: UserPicture( picAdderess: 'images/'+ snapshot.data![i]["image"].split('/').last,
+                                        onPressed: () {  }, hotelId:snapshot.data![i]["id"] ,),
+                                      title:snapshot.data![i]["name"], place: snapshot.data![i]["place"], hotelId: (snapshot.data![i]["id"]),),
                                     SizedBox(width: 15,),
-                                    HomeCard(onPessed: (){},
-                                      icon: UserPicture( picAdderess: 'images/'+ snapshot.data![i]["image"].split('/').last, onPressed: () {  },),
-                                      title:snapshot.data![i]["type"],),
                                   ],
                                 ),
                             ]
-                            )),
+                            ),
+                          ),
                         );
                       });
                     }else{return CircularProgressIndicator();};
@@ -88,23 +104,22 @@ class _HomeState extends State<Home> {
 }
 
 class UserPicture extends StatelessWidget {
-  const UserPicture({Key? key, required this.picAdderess, required this.onPressed}) : super(key: key);
+  const UserPicture({Key? key, required this.picAdderess, required this.onPressed, required this.hotelId}) : super(key: key);
   final String picAdderess;
   final VoidCallback onPressed;
+  final int hotelId;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) =>  BookingScreen()),
+          MaterialPageRoute(builder: (context) =>  BookingScreen(hotelId: hotelId,)),
         );
       },
-      child: CircleAvatar(
-        minRadius: 50.0,
-        maxRadius: 70.0,
-        backgroundColor: Colors.grey,
-        backgroundImage: AssetImage(picAdderess),
+      child: Container(
+        color: Colors.grey,
+        child: Image.asset(picAdderess, width: 290,height: 200,fit: BoxFit.cover,),
       ),
     )
     ;
@@ -113,19 +128,21 @@ class UserPicture extends StatelessWidget {
 
 class HomeCard extends StatelessWidget {
   const HomeCard({
-    Key? key, required this.onPessed, required this.icon, required this.title,
+    Key? key, required this.onPessed, required this.icon, required this.title, required this.place, required this.hotelId,
   }) : super(key: key);
   final VoidCallback onPessed;
   final UserPicture icon;
   final String title;
+  final int hotelId;
+  final String place;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPessed ,
       child: Container(
         // margin: EdgeInsets.only(top: kDefaultPadding / 2),
-        width: MediaQuery.of(context).size.width /2.4,
-        height: MediaQuery.of(context).size.height/ 3,
+        width: MediaQuery.of(context).size.width /1.2,
+        height: MediaQuery.of(context).size.height/ 2.3,
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20)
@@ -135,21 +152,38 @@ class HomeCard extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             icon,
-            Text(title,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.blueGrey,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold
-              ),),
 
-            ElevatedButton(onPressed: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BookingScreen()),
-              );
-            }, child: Text("Book"))
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(title,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.blueGrey,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold
+                  ),),
+                Text(hotelId.toString(),
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.blueGrey,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold
+                  ),),
+                Text(place,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.blueGrey,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold
+                  ),),
+              ],
+            )
+
+
           ],
         ),
       ),
