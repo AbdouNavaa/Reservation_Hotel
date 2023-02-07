@@ -41,10 +41,10 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: Container(
         child: ProgressHUD(
-        child: Form(
-          key: globalFormKey,
-          child: _loginUI(context),
-        ),
+          child: Form(
+            key: globalFormKey,
+            child: _loginUI(context),
+          ),
           inAsyncCall: isAPIcallProcess,
           opacity: 0.3,
           key: UniqueKey(),
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
             width: screenWidth,
             alignment: Alignment.centerLeft,
             margin: EdgeInsets.symmetric(
-              vertical: screenWidth /100,
+                vertical: screenWidth /100,
                 horizontal: screenWidth / 100
             ),
             child: FormHelper.inputFieldWidget(context,"username", "Username", (onValidateVal){
@@ -106,13 +106,13 @@ class _LoginPageState extends State<LoginPage> {
             }, (onSavedVal){
               username = onSavedVal;
             },
-            borderColor: Colors.black,
-            prefixIconColor: Colors.black,
-            borderFocusColor: Colors.black,
-            hintColor: Colors.black.withOpacity(0.7),
-            textColor: Colors.black,
-              borderRadius: 15,
-              suffixIcon: Icon(Icons.person, color: Colors.black,),
+                borderColor: Colors.black,
+                prefixIconColor: Colors.black,
+                borderFocusColor: Colors.black,
+                hintColor: Colors.black.withOpacity(0.7),
+                textColor: Colors.black,
+                borderRadius: 15,
+                suffixIcon: Icon(Icons.person, color: Colors.black,),
                 contentPadding: screenHeight /40
 
             ),
@@ -138,87 +138,87 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: 15,
                 hintColor: Colors.black.withOpacity(0.7),
                 contentPadding: screenHeight /40,
-              obscureText: hidePassword,
-              suffixIcon: IconButton(onPressed: (){
-                setState(() {
-                  hidePassword = !hidePassword;
-                });
-              }, icon: Icon(hidePassword? Icons.visibility_off:Icons.visibility,color: Colors.black,)),
+                obscureText: hidePassword,
+                suffixIcon: IconButton(onPressed: (){
+                  setState(() {
+                    hidePassword = !hidePassword;
+                  });
+                }, icon: Icon(hidePassword? Icons.visibility_off:Icons.visibility,color: Colors.black,)),
                 backgroundColor: Colors.white.withOpacity(0.7)
             ),
           ),
           Align(
             alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 25, top: 5),
-                child: RichText(
-                  text: TextSpan(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 25, top: 5),
+              child: RichText(
+                text: TextSpan(
                     style: TextStyle(color: Colors.grey, fontSize: 16.0),
                     children: [
                       TextSpan(
-                        text: 'Forget Password ?',
-                        style: TextStyle(color: Colors.black,fontStyle: FontStyle.italic, decoration: TextDecoration.underline),
-                        recognizer: TapGestureRecognizer()..onTap = (){
-                          print("Forget Password");
-                        }
+                          text: 'Forget Password ?',
+                          style: TextStyle(color: Colors.black,fontStyle: FontStyle.italic, decoration: TextDecoration.underline),
+                          recognizer: TapGestureRecognizer()..onTap = (){
+                            print("Forget Password");
+                          }
                       )
                     ]
-                  ),
                 ),
               ),
+            ),
           ),
           SizedBox(height: 20,),
-         Row(
-           mainAxisAlignment: MainAxisAlignment.spaceAround,
-           children: [
-             Container(
-                 // width: 350,
-                 child: FormHelper.submitButton(
-                     "Login", (){
-                   if(validateAndSave()){
-                     setState(() {
-                       isAPIcallProcess = true;
-                     });
-                     LoginRequestModel model = LoginRequestModel(username: username!, password: password!);
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                // width: 350,
+                  child: FormHelper.submitButton(
+                      "Login", (){
+                    if(validateAndSave()){
+                      setState(() {
+                        isAPIcallProcess = true;
+                      });
+                      LoginRequestModel model = LoginRequestModel(username: username!, password: password!);
 
-                     APIService.login(model).then((response) => {
-                       setState(() {
-                         isAPIcallProcess = false;
-                       }),
-                       if(response){
-                         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false,)
-                       } else{
-                         FormHelper.showSimpleAlertDialog(
-                             context, Config.appName, "Invalide Username/Password",
-                             "OK",
-                                 (){
-                               Navigator.pop(context);
-                             }
-                         )
-                       }
-                     });
-                   }
+                      APIService.login(model).then((response) => {
+                        setState(() {
+                          isAPIcallProcess = false;
+                        }),
+                        if(response){
+                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false,)
+                        } else{
+                          FormHelper.showSimpleAlertDialog(
+                              context, Config.appName, "Invalide Username/Password",
+                              "OK",
+                                  (){
+                                Navigator.pop(context);
+                              }
+                          )
+                        }
+                      });
+                    }
 
-                 },
-                     btnColor:  Colors.black,
-                     borderColor: Colors.black,
-                     txtColor: Colors.white,
-                     borderRadius: 40
-                 )),
-             // SizedBox(height: 10,),
-             Container(
-                 // width: 350,
-                 child: FormHelper.submitButton(
-                   "Register", (){
-                   Navigator.pushNamed(context,"/register");
-                 },
-                   btnColor:  Colors.black,
-                   borderColor: Colors.black,
-                   txtColor: Colors.white,
-                   borderRadius: 40,
-                 )),
-           ],
-         )
+                  },
+                      btnColor:  Colors.black,
+                      borderColor: Colors.black,
+                      txtColor: Colors.white,
+                      borderRadius: 40
+                  )),
+              // SizedBox(height: 10,),
+              Container(
+                // width: 350,
+                  child: FormHelper.submitButton(
+                    "Register", (){
+                    Navigator.pushNamed(context,"/register");
+                  },
+                    btnColor:  Colors.black,
+                    borderColor: Colors.black,
+                    txtColor: Colors.white,
+                    borderRadius: 40,
+                  )),
+            ],
+          )
 
         ],
       ),

@@ -1,20 +1,20 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/data_service/book_service.dart';
 import 'package:frontend/pages/login.dart';
 
+import 'HotelsByPlace.dart';
 import 'booking.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
    Home({super.key});
   // final int? UserId;
-//   @override
-//   State<Home> createState() => _HomeState();
-// }
+  @override
+  State<Home> createState() => _HomeState();
+}
 //
-// class _HomeState extends State<Home> {
+class _HomeState extends State<Home> {
 
   BookService bookService = BookService();
   // late List<Book>? books;
@@ -23,83 +23,100 @@ class Home extends StatelessWidget {
   //   // TODO: implement initState
   //   super.initState();
   // }
+  TextEditingController _controller = TextEditingController();
+   late String _searchTerm;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text('Hotel Booking', style: TextStyle(fontSize: 27, fontStyle: FontStyle.italic),),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: (){
-            // setState(() {
-            //   TextFormField(
-            //     style: TextStyle(
-            //       height: 20,
-            //       backgroundColor: Colors.white,
-            //       // color: Colors.white
-            //     ),
-            //   );
-            // });
-          },
-          icon: Icon(Icons.search),
-        ),
-        actions: [
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: Text('Hotel Booking', style: TextStyle(fontSize: 27, fontStyle: FontStyle.italic),),
+          centerTitle: true,
+          actions: [
 
-          const Padding(padding: EdgeInsets.all(12.0)),
+            const Padding(padding: EdgeInsets.all(12.0)),
 
-          IconButton(
-            onPressed: () {     Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
-            ); },
-            icon:  const Icon(
-              Icons.logout_outlined,
-              color: Colors.white,
-              size: 35,
+            IconButton(
+              onPressed: () {     Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              ); },
+              icon:  const Icon(
+                Icons.logout_outlined,
+                color: Colors.white,
+                size: 35,
+              ),
             ),
-          ),
-        ],
+          ],
 
-      ),
-      body: Container(
-        child:
-        FutureBuilder<List>(
-                  future: bookService.getBook(),
-                  builder: (context, snapshot) {
-                    print(snapshot.data);
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data?.length,
-                          itemBuilder: (context, i){
-                        return SingleChildScrollView(
-                          child: Container(
-                            margin: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)
+        ),
+        body: Padding(
+            padding: EdgeInsets.only(top: 10),
+              child: Column(
+              children: [
+              TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.circular(30)),
+              hintText: 'Enter search term',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                )
+              ),
+              onChanged: (value) {
+                  setState(() {
+                  _searchTerm = value;
+                  });
+                },
+    ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(fixedSize: Size(350, 40),backgroundColor: Colors.black),
+                  onPressed: (){Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  HotelListScreen( search: _searchTerm,)),
+                  );},
+                      // bookService.getHotelsByPlace(_searchTerm),
+                  child: Text('Search'),
+                ),
+    Expanded(child:
+    FutureBuilder<List>(
+        future: bookService.getBook(),
+        builder: (context, snapshot) {
+          print(snapshot.data);
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: snapshot.data?.length,
+                itemBuilder: (context, i){
+                  return SingleChildScrollView(
+                    child: Container(
+                      margin: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children:[
+                            Row(
+                              children: [
+                                HomeCard(onPessed: (){},
+                                  icon: UserPicture( picAdderess: 'images/'+ snapshot.data![i]["image"].split('/').last,
+                                    onPressed: () {  }, hotelId:snapshot.data![i]["id"] ,),
+                                  title:snapshot.data![i]["name"], place: snapshot.data![i]["place"], hotelId: (snapshot.data![i]["id"]),),
+                                SizedBox(width: 15,),
+                              ],
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children:[
-                                Row(
-                                  children: [
-                                    HomeCard(onPessed: (){},
-                                      icon: UserPicture( picAdderess: 'images/'+ snapshot.data![i]["image"].split('/').last,
-                                        onPressed: () {  }, hotelId:snapshot.data![i]["id"] ,),
-                                      title:snapshot.data![i]["name"], place: snapshot.data![i]["place"], hotelId: (snapshot.data![i]["id"]),),
-                                    SizedBox(width: 15,),
-                                  ],
-                                ),
-                            ]
-                            ),
-                          ),
-                        );
-                      });
-                    }else{return CircularProgressIndicator();};
-                  })
-      ),
-    );
+                          ]
+                      ),
+                    ),
+                  );
+                });
+          }else{return CircularProgressIndicator();
+          }
+        })
+      ,)
+    ])));
   }
 }
 
@@ -119,7 +136,7 @@ class UserPicture extends StatelessWidget {
       },
       child: Container(
         color: Colors.grey,
-        child: Image.asset(picAdderess, width: 290,height: 200,fit: BoxFit.cover,),
+        child: Image.asset(picAdderess, width: 290,height: 220,fit: BoxFit.cover,),
       ),
     )
     ;

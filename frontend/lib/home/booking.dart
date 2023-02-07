@@ -20,7 +20,7 @@ class BookingScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Details', style: TextStyle(fontSize: 27, fontStyle: FontStyle.italic),),
+        title: Text('Details du hotel'+hotelId.toString(), style: TextStyle(fontSize: 27, fontStyle: FontStyle.italic),),
         centerTitle: true,
       ),
 

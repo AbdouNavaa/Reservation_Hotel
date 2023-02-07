@@ -21,7 +21,48 @@ try {
   return Future.error(e);
 }
   }
+  Future<List<Hotel>> fetchData(String searchTerm) async {
+    // API URL to fetch data
+    try{
+      var response =
+      await http.get(Uri.parse("http://192.168.43.73:8000/booking/HotelListView/"));
 
+      // Parse data from API response
+      // ...
+      List<Hotel> dataList = [];
+      // Filter data based on searchTerm
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        assert(data != null);
+        assert(data['results'] != null);
+        List<Hotel> filteredData = dataList.where((hotel) => hotel.place.contains(searchTerm)).toList();
+
+        // Return filtered data
+        return filteredData;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    }
+    catch(e){
+      print(e.toString());
+
+      // Return an empty list on error
+      return [];
+    }
+  }
+  static const API_URL = 'http://192.168.43.73:8000/booking/hotels/';
+
+  Future<List> getHotelsByPlace(String place) async {
+    final response = await http.get(Uri.parse(API_URL + place ));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+      print('4e sla7 --------------------------------------------');
+    } else {
+      return Future.error('Server Error');
+      print('4e 5asser sa77bi mad5al======================================');
+    }
+  }
 
   Future<List> getRoom(int id) async {
 try {

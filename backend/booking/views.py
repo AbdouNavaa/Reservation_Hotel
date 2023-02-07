@@ -3,9 +3,12 @@ from rest_framework import generics,viewsets
 from .models import Room,Booking,Hotel
 from .serializer import RoomSerializer,BookingSerializer,HotelSerializer
 
+
+# Reservation
 class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+
 
 # Create your views here.
 class HotelListView(generics.ListAPIView):
@@ -37,3 +40,13 @@ class BookingListView(generics.ListAPIView):
     queryset=Booking.objects.all()
     serializer_class=BookingSerializer
     
+    
+# Search Hotel
+class HotelSearchView(generics.ListAPIView):
+    serializer_class = HotelSerializer
+
+    def get_queryset(self):
+        place = self.kwargs.get('place', None)
+        if place is not None:
+            return Hotel.objects.filter(place__iexact=place)
+        return Hotel.objects.none()

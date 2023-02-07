@@ -11,6 +11,20 @@ import '../models/register_response_model.dart';
 class APIService {
   static var client = http.Client();
 
+
+ static Future<int> login1(String username, String password) async {
+    var url = Uri.http(Config.apiURL, Config.loginAPI);
+    var response = await http.post(url, body: {'username': username, 'password': password});
+
+    if (response.statusCode == 200) {
+      var user = json.decode(response.body);
+      int userId = user['id'];
+      return userId;
+    } else {
+      throw Exception('Failed to login');
+    }
+  }
+
   static Future<bool> login(LoginRequestModel model) async {
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',
