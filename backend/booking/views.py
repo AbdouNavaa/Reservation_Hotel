@@ -1,8 +1,36 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from rest_framework import generics,viewsets
 from .models import Room,Booking,Hotel
+from hotel.models import User
 from .serializer import RoomSerializer,BookingSerializer,HotelSerializer
+from django.http import JsonResponse
 
+def make_reservation(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        room_id = request.POST.get('room_id')
+        date = request.POST.get('date')
+        try:
+            room = Room.objects.get(id=room_id)
+            user = User.objects.get(username=username)
+            reservation = Booking.objects.create(
+                room=room,
+                user=user,
+                date=date
+            )
+            return JsonResponse({'status': 'success'})
+        except Room.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Room does not exist'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User does not exist'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+def reservation_view(request, username, room_id, date):
+    user = get_object_or_404(User, username=username)
+    room = get_object_or_404(Room, pk=room_id)
+    reservation = get_object_or_404(Booking, room=room, user=user, date=date)
+    return render(request, 'reservation.html', {'reservation': reservation})
 
 # Reservation
 class ReservationViewSet(viewsets.ModelViewSet):

@@ -10,6 +10,7 @@ import 'package:snippet_coder_utils/ProgressHUD.dart';
 import 'package:snippet_coder_utils/FormHelper.dart';
 
 import '../config.dart';
+import '../home/home_page.dart';
 class LoginPage extends StatefulWidget {
   // const LoginPage({Key? key}) : super(key: key);
 
@@ -178,6 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                     if(validateAndSave()){
                       setState(() {
                         isAPIcallProcess = true;
+
                       });
                       LoginRequestModel model = LoginRequestModel(username: username!, password: password!);
 
@@ -186,8 +188,11 @@ class _LoginPageState extends State<LoginPage> {
                           isAPIcallProcess = false;
                         }),
                         if(response){
-                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false,)
-                        } else{
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Home(Username: username,)),
+                      )
+                    } else{
                           FormHelper.showSimpleAlertDialog(
                               context, Config.appName, "Invalide Username/Password",
                               "OK",

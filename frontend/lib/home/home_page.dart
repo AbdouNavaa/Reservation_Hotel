@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:frontend/data_service/book_service.dart';
 import 'package:frontend/pages/login.dart';
 
+import '../models/login_response_model.dart';
 import 'HotelsByPlace.dart';
 import 'booking.dart';
 
 class Home extends StatefulWidget {
-   Home({super.key});
-  // final int? UserId;
+   Home({super.key, this.Username, this.id});
+  final int? id;
+  final String? Username;
   @override
   State<Home> createState() => _HomeState();
 }
@@ -17,6 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   BookService bookService = BookService();
+  late final Data data;
   // late List<Book>? books;
   // @override
   // void initState() {
@@ -25,13 +28,14 @@ class _HomeState extends State<Home> {
   // }
   TextEditingController _controller = TextEditingController();
    late String _searchTerm;
+   late bool like = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          title: Text('Hotel Booking', style: TextStyle(fontSize: 27, fontStyle: FontStyle.italic),),
+          title: Text('Hotels', style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic),),
           centerTitle: true,
           actions: [
 
@@ -100,10 +104,18 @@ class _HomeState extends State<Home> {
                           children:[
                             Row(
                               children: [
-                                HomeCard(onPessed: (){},
+                                HomeCard(onPessed1: (){
+                                  setState(() {
+                                    like = true;
+                                    print(like);
+                                  });
+                                },
+                                  //mages
                                   icon: UserPicture( picAdderess: 'images/'+ snapshot.data![i]["image"].split('/').last,
-                                    onPressed: () {  }, hotelId:snapshot.data![i]["id"] ,),
-                                  title:snapshot.data![i]["name"], place: snapshot.data![i]["place"], hotelId: (snapshot.data![i]["id"]),),
+                                    onPressed: (){  }, hotelId:snapshot.data![i]["id"] ,Username: widget.Username),
+
+                                  title:snapshot.data![i]["name"], place: snapshot.data![i]["place"], hotelId: (snapshot.data![i]["id"]),
+                                  fav: like ?Icon(Icons.favorite_border): Icon(Icons.favorite),),
                                 SizedBox(width: 15,),
                               ],
                             ),
@@ -121,17 +133,19 @@ class _HomeState extends State<Home> {
 }
 
 class UserPicture extends StatelessWidget {
-  const UserPicture({Key? key, required this.picAdderess, required this.onPressed, required this.hotelId}) : super(key: key);
+  const UserPicture({Key? key, required this.picAdderess, required this.onPressed, required this.hotelId, this.Username}) : super(key: key);
   final String picAdderess;
   final VoidCallback onPressed;
   final int hotelId;
+  final String? Username;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) =>  BookingScreen(hotelId: hotelId,)),
+          MaterialPageRoute(builder: (context) =>  BookingScreen(hotelId: hotelId,Username: Username,)),
         );
       },
       child: Container(
@@ -145,17 +159,18 @@ class UserPicture extends StatelessWidget {
 
 class HomeCard extends StatelessWidget {
   const HomeCard({
-    Key? key, required this.onPessed, required this.icon, required this.title, required this.place, required this.hotelId,
+    Key? key, required this.onPessed1, required this.icon, required this.title, required this.place, required this.hotelId, required this.fav,
   }) : super(key: key);
-  final VoidCallback onPessed;
+  final VoidCallback onPessed1;
   final UserPicture icon;
   final String title;
   final int hotelId;
   final String place;
+  final Icon fav;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onPessed ,
+      onTap: onPessed1 ,
       child: Container(
         // margin: EdgeInsets.only(top: kDefaultPadding / 2),
         width: MediaQuery.of(context).size.width /1.2,
@@ -181,14 +196,19 @@ class HomeCard extends StatelessWidget {
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold
                   ),),
-                Text(hotelId.toString(),
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.blueGrey,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold
-                  ),),
+                // Text(hotelId.toString(),
+                //   textAlign: TextAlign.start,
+                //   style: TextStyle(
+                //       fontSize: 20,
+                //       color: Colors.blueGrey,
+                //       fontStyle: FontStyle.italic,
+                //       fontWeight: FontWeight.bold
+                //   ),),
+            IconButton(
+              icon: fav,
+              color: Colors.black,
+               onPressed: onPessed1,
+            ),
                 Text(place,
                   textAlign: TextAlign.start,
                   style: TextStyle(

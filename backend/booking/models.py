@@ -19,10 +19,10 @@ class Room(models.Model):
     def __str__(self):
         return self.type
 class Booking(models.Model):
-    bookedBy = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE,null=True)
     date = models.DateField(null=True)
     
    
     def __str__(self):
-        return "Booking ID: "+str(self.id)
+        return f"{self.user.username} reserved {self.room} on {self.date}"

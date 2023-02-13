@@ -1,10 +1,22 @@
 import 'dart:convert';
 // import 'package:frontend/auth_service/auth_service.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookService {
   var client = http.Client();
 
+//   Future<void> _storeUserId(int id) async {
+//     final prefs = await SharedPreferences.getInstance();
+//     prefs.setInt('user_id', id);
+//   }
+//
+// // Get the user id from the local preferences
+//   Future<int> _getUserId() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     return prefs.getInt('user_id')!;
+//   }
   Future<List> getBook() async {
 try {
   var response =
@@ -81,10 +93,10 @@ try {
 }
   }
 
-  Future<http.Response> addReservation(int IdUser, DateTime date, int IdRoom) async {
+  Future<http.Response> addReservation(String username, int IdRoom, DateTime date,) async {
     Map<String, dynamic> data = {
-      'IdUser': IdUser,
-      'date': date.toString(),
+      'username': username,
+      'date': date,
       'IdRoom': IdRoom.toString(),
     };
 
@@ -100,6 +112,23 @@ try {
 
     return response;
   }
+  Future<void> createReservation(String username, int roomId, DateTime date) async {
+    final response =  await http.post(Uri.parse('http://192.168.43.73:8000/booking/api/reservation/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'room_id': roomId, 'date': date}),
+    );
+
+    if (response.statusCode == 200) {
+      // success
+      print("------------------Ok----------------------- ");
+      // ...
+    } else {
+      // error
+      print("---------------Desole-----------------");
+      // ...
+    }
+  }
+
 
 }
 

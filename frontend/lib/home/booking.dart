@@ -3,15 +3,20 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/data_service/book_service.dart';
+import 'package:frontend/home/reservation.dart';
+import 'package:frontend/models/login_response_model.dart';
 import 'package:frontend/pages/login.dart';
 
 import 'booking.dart';
 
 class BookingScreen extends StatelessWidget {
-  BookingScreen({super.key, required this.hotelId});
+  BookingScreen({super.key, required this.hotelId, this.Username});
   final int hotelId;
+  final String? Username;
 
   int? UserId;
+  // LoginResponseModel model = LoginResponseModel( key: '');
+
   // String? username;
   BookService bookService = BookService();
 
@@ -20,7 +25,7 @@ class BookingScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Details du hotel'+hotelId.toString(), style: TextStyle(fontSize: 27, fontStyle: FontStyle.italic),),
+        title: Text('Details du hotel', style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic),),
         centerTitle: true,
       ),
 
@@ -45,8 +50,18 @@ class BookingScreen extends StatelessWidget {
                                   children:[
                                     Row(
                                       children: [
-                                        HomeCard(onPessed:() => bookService.addReservation(snapshot.data![i]["IdUser"],
-                              DateTime.now(), snapshot.data![i]["id"]),
+                                        HomeCard( onPessed: (){Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ReservationPage(username: Username!,id: snapshot.data![i]["id"],
+                                price: double.parse(snapshot.data![i]["amount"]),)),
+                              ); },
+                              // onPessed: () =>     bookService.addReservation(Username!,
+                                          //   DateTime.now().toString(), snapshot.data![i]["id"],),
+                                        //  Navigator.push(
+                                          //                           context,
+                                          //                           MaterialPageRoute(builder: (context) => ReservationPage()),
+                                          //                           ); }
+
                                             icon: UserPicture( picAdderess: 'images/'+ snapshot.data![i]["image"].split('/').last, onPressed: () {  },
                                              ),
                                             type:snapshot.data![i]["type"], amount: double.parse(snapshot.data![i]["amount"]),),
